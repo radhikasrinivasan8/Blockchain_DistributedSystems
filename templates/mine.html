@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+            function setFormData(x,url){
+                $.get(url, function(data){
+                var value = ""
+                for(i = 0; i < data.length; i++){
+                    value = value.concat("Transaction_id: "
+                                .concat(String(data[i].transaction_id)))
+                                .concat("\nProduct Serial Number: ")
+                                .concat(String(data[i].product_serial_number))
+                                .concat("\nProduct Name: ")
+                                .concat(String(data[i].product_name))
+                                .concat("\nProduct Price: ")
+                                .concat(String(data[i].product_price))
+                                .concat("\nType: ")
+                                .concat(String(data[i].tran_type));
+                        
+                        if(data.tran_type == "Manufacturer"){
+                            value = value.concat("\nManufacturer ID: ")
+                                        .concat(String(data[i].manufacturer_seller_id))
+                                        .concat("\nManufacturer Name: ")
+                                        .concat(String(data[i].manufacturer_seller_name));
+                        }
+                        else{
+                            value = value.concat("\nSeller ID: ")
+                                        .concat(String(data[i].manufacturer_seller_id))
+                                        .concat("\nSeller Name: ")
+                                        .concat(String(data[i].manufacturer_seller_name));
+                        }
+
+                        value = value.concat("\nAddress: ")
+                                     .concat(String(data[i].manufacturer_seller_address))
+                                     .concat("\nLicence Number: ")
+                                     .concat(String(data[i].manufacturer_seller_licence_number))
+                                     .concat("\n\n");       
+                        
+                        document.forms[x].elements['comment'].value = value
+                }
+               
+                        
+            });
+        }
+        
+            function myFunction() {
+                $.get("http://0.0.0.0:5000/getnodes", function(data, status){
+                    if (data.total_nodes.length > 0){
+                        for (i = 1; i <= data.total_nodes.length; i++) {
+                            var x = 'Nodes' + i 
+                            var y = "NodeName" + i
+                            var z = "Node-Tran" + i
+                            document.getElementById(x).reset();
+                            document.getElementById(y).innerHTML = "Miner Address - ".concat(String(data.total_nodes[i-1]));
+                            document.getElementById(z).innerHTML = "Transaction Details to Mine";
+                            
+                            var port = 5000;  
+                            var url = "http://0.0.0.0:".concat(String(port)).concat("/get_pending_transactions"); 
+                            seturl(x,i)
+                            document.getElementById(x).style.display="block";                   
+                        }
+                    }
+                    else{
+                        document.getElementById("demo").innerHTML = "No active nodes";
+                    }
+
+                    });
+                };
+            function seturl(x,i){
+                var port = 4999 + i;  
+                var url = "http://0.0.0.0:".concat(String(port)).concat("/get_pending_transactions"); 
+                setFormData(x,url);
+                return url;
+            }
+        </script>
+
+</head>
+<style>
+body {font-family: Arial, Helvetica, sans-serif;
+    transition: background-color .5s;
+    background-image: url("blockchain1.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;}
+* {box-sizing: border-box}
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    display: inline-block;
+    border: none;
+    background: #f1f1f1;
+}
+
+/* Add a background color when the inputs get focus */
+input[type=text]:focus, input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+
+/* Set a style for all buttons */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+}
+
+button:hover {
+    opacity:1;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+    padding: 14px 20px;
+    background-color: #f44336;
+}
+
+/* Float cancel and signup buttons and add an equal width */
+.cancelbtn, .signupbtn {
+  float: left;
+  width: 50%;
+}
+
+/* Add padding to container elements */
+.container {
+    padding: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: #474e5d;
+    padding-top: 50px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* Style the horizontal ruler */
+hr {
+    border: 1px solid #f1f1f1;
+    margin-bottom: 25px;
+}
+ 
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 35px;
+    top: 15px;
+    font-size: 40px;
+    font-weight: bold;
+    color: #f1f1f1;
+}
+
+.close:hover,
+.close:focus {
+    color: #f44336;
+    cursor: pointer;
+}
+
+/* Clear floats */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Change styles for cancel button and signup button on extra small screens */
+@media screen and (max-width: 300px) {
+    .cancelbtn, .signupbtn {
+       width: 100%;
+    }
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+.inline-div {
+    display:inline-block;
+}
+.inline-txtarea {
+    resize: none;
+    border : 1px solid black;
+    height:450px;
+    width: 300px;
+    font-family:'Lucida Sans';
+    font-size: medium;
+}
+#main {
+    transition: margin-left .5s;
+    padding: 16px;
+}
+
+</style>
+<body>
+
+<div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="register_product.html">Seller Transaction</a>
+        <a href="register_manufacturer_product.html">Manufacturer Transaction</a>
+        <a href="mine.html">Mine Transactions</a>
+        <a href="block_details.html">BlockChain Details</a>
+        <a href="block_details_node.html">Node Wise Block Details</a>
+        <a href="concensus.html">Concensus</a>
+        <a href="product-details.html">Product Tracking</a>
+      </div>
+      
+      <div id="main">
+        <h2>Welcome To BlockChain Baby Product Registeration Portal</h2>
+        <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
+      </div>
+      
+      <script>
+      function openNav() {
+          document.getElementById("mySidenav").style.width = "250px";
+          document.getElementById("main").style.marginLeft = "250px";
+          document.getElementById("btn1").style.marginLeft = "250px";
+          document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+      }
+      
+      function closeNav() {
+          document.getElementById("mySidenav").style.width = "0";
+          document.getElementById("main").style.marginLeft= "0";
+          document.getElementById("btn1").style.marginLeft= "0";
+          document.body.style.backgroundColor = "white";
+      }
+     
+    </script>
+<button id = "btn1" onclick="myFunction();" style="width:auto;">Get Active Nodes</button>
+
+<p id="demo"></p>
+<p id="Node-Tran1"> </p>
+<p id="NodeName1"> </p>
+<form id ="Nodes1" name= "Nodes1" style = "display:none;" action="http://0.0.0.0:5000/mine" method="POST" enctype="application/json" target ="formresponse">
+    <div class="container">
+            <div> <div>
+                   
+                    <textarea rows="20" cols="50" form="Nodes1" id="comment" name ="comment" form="usrform" readonly = True>No Transaction to Mine</textarea>
+                </div>
+                <div class="button">
+                    <button type="submit" style="width:auto;">Mine</button>
+                </div>
+                <iframe name = "formresponse" width = '1000' height = '50'></iframe>
+    </div>      
+  </form>
+  
+  <p id="Node-Tran2"> </p>
+  <p id="NodeName2"> </p>
+  <form id ="Nodes2" name = "Nodes2" style = "display:none;" action="http://0.0.0.0:5001/mine" method="POST" enctype="application/json" target ="formresponse1">
+    <div class="container1">
+
+            <div> <div>
+                    
+                    <textarea rows="20" cols="50" form="Nodes2" id="comment" name ="comment" form="usrform" readonly = True>No Transaction to Mine</textarea>
+                </div>
+                <div class="button">
+                    <button type="submit" style="width:auto;">Mine</button>
+                </div>
+                <iframe name = "formresponse1" width = '1000' height = '50'></iframe>
+        </div>      
+    </form>
+
+    <p id="Node-Tran3"> </p>
+    <p id="NodeName3"> </p>
+  
+  <form id ="Nodes3" name = "Nodes3" style = "display:none;" action="http://0.0.0.0:5002/mine" method="POST" enctype="application/json" target ="formresponse2">
+    <div class="container2">
+
+            <div> <div>
+                    
+                    <textarea rows="20" cols="50" form="Nodes3" id="comment" name ="comment" readonly = True>No Transaction to Mine</textarea>
+                </div>
+                <div class="button">
+                    <button type="submit" style="width:auto;">Mine</button>
+                </div>
+                <iframe name = "formresponse2" width = '1000' height = '50'></iframe>
+        </div>      
+    </form>
+
+<p id="Node-Tran4"> </p>
+<p id="NodeName4"> </p>
+<form id ="Nodes4" name = "Nodes4" style = "display:none;" action="http://0.0.0.0:5003/mine" method="POST" enctype="application/json" target ="formresponse3">
+      <div class="container3">
+  
+              <div> <div>
+                      
+                      <textarea rows="20" cols="50" form="Nodes4" id="comment" name ="comment" readonly = True>No Transaction to Mine</textarea>
+                  </div>
+                  <div class="button">
+                      <button type="submit" style="width:auto;">Mine</button>
+                  </div>
+                  <iframe name = "formresponse3" width = '1000' height = '50'></iframe>
+          </div>      
+      </form>
+<script>
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        document.getElementById("myForm").reset();
+    }
+}
+</script>
+
+</body>
+</html>

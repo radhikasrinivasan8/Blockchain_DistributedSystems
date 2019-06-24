@@ -1,0 +1,1 @@
+curl -i -X POST http://0.0.0.0:5001/transactions/new_seller -d '{"product_serial_number":"68368368","product_name":"test","product_price":5,"manufacturer_seller_id":"17678","manufacturer_seller_name":"test123","manufacturer_seller_address":"3700","manufacturer_seller_licence_number":"86386"}'
